@@ -4,15 +4,13 @@
 
 ## Install (Windows 10 or 11, x64)
 
-1. Open the **installer** folder in this GitHub repository.
-2. Download **OTS_Clipboard_History_Setup.exe** (this is the actual installer).
-3. Double-click the downloaded .exe, follow the setup wizard, and select **Launch OTS Clipboard History**.
-4. The program opens immediately and records future plain-text copies. Try copying a sentence using Ctrl+C or the right-click Copy menu.
-5. Optionally check **Start with Windows** in the app so tracking begins after you sign in.
+1. Open [GitHub Releases — v1.2.2 legacy preview](https://github.com/ohanatechsolutions/OTS_Clipboard_History/releases/tag/v1.2.2-legacy-preview).
+2. Under **Assets**, download `OTS_Clipboard_History_Setup.exe` and its matching `.exe.sha256` checksum.
+3. Compare the published SHA-256 to the downloaded EXE using `(Get-FileHash .\OTS_Clipboard_History_Setup.exe -Algorithm SHA256).Hash`.
+4. This is an **unsigned historical pre-release**, not a certified production build. A clean Windows install and GUI acceptance test must still be performed before a final release.
+5. After verification, follow the Windows setup wizard. If upgrading from the earlier **OTS Clipboard** application, exit it via its tray icon first. The same Inno Setup AppId is used, and the application is designed to preserve and migrate older DPAPI-encrypted history. Verify migration before deleting any legacy data.
 
-If upgrading from the earlier **OTS Clipboard** application, close it using its tray icon before installing. The setup wizard uses the same Inno Setup application ID, and on first run the new app migrates the legacy DPAPI-encrypted history to the new data directory without deleting the original file. If **Start with Windows** was previously enabled, the app updates that registry entry to the renamed executable. You can delete the legacy history folder after verifying the new history is complete.
-
-If the installer has not appeared yet, open **Actions > Build Windows installer > the newest successful run**, download the **OTS_Clipboard_History_Windows_Installer** artifact, unzip it, and run the setup .exe. The workflow builds and saves the real .exe; **packaging/OTS_Clipboard_History.iss** is only installer *source*. Installers are unsigned, so SmartScreen may ask for confirmation.
+Current builds remain downloadable as temporary artifacts under **Actions → Build Windows installer**. The `packaging/OTS_Clipboard_History.iss` file is the installer recipe, not a runnable installer. Builds no longer commit generated EXE or checksum files into the source tree.
 
 **The installer bundles the .NET Desktop runtime** (self-contained). Users don't need Python, Visual Studio, or the .NET SDK.
 
@@ -86,7 +84,7 @@ The workflow at **.github/workflows/windows-installer.yml** runs on every push t
 3. Compiles an Inno Setup installer executable.
 4. Generates the matching SHA-256 checksum.
 5. Publishes a downloadable GitHub Actions artifact.
-6. Commits installer .exe and .sha256 to **installer/** when below GitHub's file-size limit.
+6. Keeps generated binaries out of source control; reviewed, approved versions should be distributed through GitHub Releases.
 
 GitHub Actions availability and minutes depend on your GitHub plan, especially for private repositories. This CI is the Windows build and packaging check; GUI interaction and tray behavior should also be smoke-tested on an actual Windows desktop.
 
@@ -95,7 +93,7 @@ GitHub Actions availability and minutes depend on your GitHub plan, especially f
 - **src/OTS.Clipboard.History/** — WPF desktop app and encrypted history persistence.
 - **packaging/OTS_Clipboard_History.iss** — Inno Setup installer definition.
 - **scripts/build-installer.ps1** — one-command Windows build.
-- **installer/** — downloadable executable once CI finishes.
+- **GitHub Releases** — versioned installer downloads; generated artifacts are not committed to the source tree.
 - **.github/workflows/** — automated Windows installer build.
 - **SECURITY.md** — private data and threat-model notes.
 
@@ -114,4 +112,4 @@ GitHub Actions availability and minutes depend on your GitHub plan, especially f
 
 ## Version and licensing
 
-Version **1.2.2**, 2026. Developed by **Ohana Tech Solutions**. This private repository has no open-source license grant; ask the owner before redistributing source code or compiled binaries.
+Version **1.2.2**, 2026. Developed by **Ohana Tech Solutions**. This publicly visible repository has no open-source license grant; ask the owner before redistributing source code or compiled binaries.
