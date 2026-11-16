@@ -12,7 +12,9 @@ dist/
 history.dat
 history.dat.tmp
 *.zip
-# Installer EXE is purposefully committed by GitHub Actions to installer/
+# Distribute compiled installers through GitHub Releases, not source commits
+installer/*.exe
+installer/*.exe.sha256
 
 # Open-source publication security baseline
 .env
