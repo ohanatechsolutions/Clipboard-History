@@ -1,0 +1,91 @@
+name: Archive previously tracked installer as pre-release
+
+# One-time source-tree-to-release migration. Runs only when this file changes.
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/migrate-existing-installer.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: archive-existing-installer-ots_clipboard_history
+  cancel-in-progress: false
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      INSTALLER: installer/OTS_Clipboard_History_Setup.exe
+      CHECKSUM: installer/OTS_Clipboard_History_Setup.exe.sha256
+      RELEASE_TAG: v1.2.2-legacy-preview
+    steps:
+      - name: Checkout exact source commit without persistent credentials
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Verify SHA-256 and real Windows PE header before any publication
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib, os, re, struct
+          binary=Path(os.environ["INSTALLER"])
+          manifest=Path(os.environ["CHECKSUM"])
+          if not binary.is_file() or not manifest.is_file():
+              raise SystemExit("Installer or its matching checksum file missing; fail closed")
+          payload=binary.read_bytes()
+          if len(payload) < 65536 or payload[:2] != b'MZ':
+              raise SystemExit("Installer is not a usable-sized MZ executable; fail closed")
+          off=struct.unpack_from("<I",payload,0x3c)[0]
+          if off<64 or off>len(payload)-24 or payload[off:off+4] != b'PE\0\0':
+              raise SystemExit("Invalid PE header; fail closed")
+          machine=struct.unpack_from("<H",payload,off+4)[0]
+          if machine not in (0x8664,0x14c):
+              raise SystemExit("Unexpected PE machine type; fail closed")
+          raw=manifest.read_text(encoding="utf-8-sig").strip()
+          line=raw.splitlines()
+          if len(line)!=1:
+              raise SystemExit("Unexpected checksum manifest format")
+          m=re.fullmatch(r'([a-fA-F0-9]{64})\s+\*?([^/\\]+)',line[0])
+          if m is None or m.group(2)!=binary.name:
+              raise SystemExit("Checksum file does not identify the intended installer")
+          actual=hashlib.sha256(payload).hexdigest()
+          if actual!=m.group(1).lower():
+              raise SystemExit("SHA-256 mismatch; refusing publication")
+          print("Verified existing installer",binary.name,"size",len(payload),"SHA256",actual,"PE machine",hex(machine))
+          PY
+
+      - name: Publish only a clearly labeled legacy pre-release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          if gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Release already exists. Refusing to overwrite existing assets."
+            exit 1
+          fi
+          gh release create "$RELEASE_TAG" "$INSTALLER" "$CHECKSUM" \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "$GITHUB_SHA" \
+            --title 'OTS Clipboard History v1.2.2 — Legacy Installer Preview' \
+            --notes 'Preserved installer previously tracked in the public main branch, not a new or independently validated build. Migrated after a static MZ/PE header check and exact SHA-256 verification. Unsigned legacy preview as documented; actual clean Windows installation, compatibility, antivirus and code-signing checks were NOT RUN in this migration. Not approved as a final production release.' \
+            --prerelease
+
+      - name: Download published asset and verify byte-for-byte
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/ots-release-check"
+          gh release download "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" \
+            --pattern "$(basename "$INSTALLER")" --dir "$RUNNER_TEMP/ots-release-check"
+          cmp -- "$INSTALLER" "$RUNNER_TEMP/ots-release-check/$(basename "$INSTALLER")"
+          echo "Published release asset matches existing installer byte-for-byte"
