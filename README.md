@@ -1,4 +1,7 @@
-# Clipboard History
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="art/header-dark.png">
+  <img alt="Clipboard History" src="art/header-light.png">
+</picture>
 
 **Clipboard History** is a lightweight, native Windows text clipboard-history app, developed by **Ohana Tech Solutions**. It silently monitors Windows clipboard changes while running, shows each copied text with a local timestamp, and lets you click any entry to copy it again.
 
