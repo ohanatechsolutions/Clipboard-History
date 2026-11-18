@@ -1,118 +1,171 @@
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="art/header-dark.png">
-  <img alt="Clipboard History" src="art/header-light.png">
-</picture>
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="art/header-dark.png" />
+    <img src="art/header-light.png" width="100%" alt="Clipboard History project banner" />
+  </picture>
+</p>
 
-**Clipboard History** is a lightweight, native Windows text clipboard-history app, developed by **Ohana Tech Solutions**. It silently monitors Windows clipboard changes while running, shows each copied text with a local timestamp, and lets you click any entry to copy it again.
+# Clipboard History
 
-## Install (Windows 10 or 11, x64)
+<p align="center"><strong>A history for your clipboard. Copy once, lose never.</strong></p>
 
-1. Open [GitHub Releases — v1.2.2 legacy preview](https://github.com/ohanatechsolutions/Clipboard-History/releases/tag/v1.2.2-legacy-preview).
-2. Under **Assets**, download the original legacy installer and its matching `.exe.sha256` checksum.
-3. Compare the published SHA-256 to the downloaded EXE using `(Get-FileHash .\<downloaded-installer>.exe -Algorithm SHA256).Hash`.
-4. This is an **unsigned historical pre-release**, not a certified production build. A clean Windows install and GUI acceptance test must still be performed before a final release.
-5. After verification, follow the Windows setup wizard. If upgrading from the earlier **OTS Clipboard** application, exit it via its tray icon first. The same Inno Setup AppId is used, and the application is designed to preserve and migrate older DPAPI-encrypted history. Verify migration before deleting any legacy data.
+<p align="center">
+  A local Windows clipboard manager by <strong>Ohana Tech Solutions</strong> for finding, organizing, and reusing copied text and images.
+</p>
 
-Current builds remain downloadable as temporary artifacts under **Actions → Build Windows installer**. The `packaging/Clipboard_History.iss` file is the installer recipe, not a runnable installer. Builds no longer commit generated EXE or checksum files into the source tree.
+<p align="center">
+  <img src="https://img.shields.io/badge/Status-Legacy%20Pre--release-orange?style=for-the-badge" alt="Status: legacy pre-release" />
+  <img src="https://img.shields.io/badge/Stack-C%23%20%7C%20WPF%20%7C%20.NET%2010-0C3370?style=for-the-badge" alt="Stack: C#, WPF and .NET 10" />
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-0C3370?style=for-the-badge" alt="License: MIT" /></a>
+  <img src="https://img.shields.io/badge/Platform-Windows%2010%2F11%20x64-0C3370?style=for-the-badge" alt="Windows 10 and 11 x64" />
+</p>
 
-**The installer bundles the .NET Desktop runtime** (self-contained). Users don't need Python, Visual Studio, or the .NET SDK.
+---
 
-## Application logo assets
+## <img src="assets/readme-icons/why.svg" width="24" height="24" alt="" /> Why This Exists
 
-![Clipboard History logo](assets/branding/Clipboard_History_Logo.png)
+Copying something useful should not mean losing access to it the moment the clipboard changes. Clipboard History provides a searchable record of copied text and images within a familiar Windows desktop interface. Instead of depending on a cloud account, the app saves history locally under the current Windows user's account, with controls for selecting, editing, re-copying, and clearing entries.
 
-Both formats of the same watermark-free artwork are available in this repository. The original 1024px PNG is embedded as the branding image in the app header, while the ICO continues to identify the Windows executable, installer, taskbar, system tray, and shortcuts:
+<table width="100%">
+  <tr>
+    <td width="33%" valign="top" align="center">
+      <p><img src="assets/readme-icons/problem.svg" width="20" height="20" alt="" /></p>
+      <p><strong>The Problem</strong></p>
+      <p>A standard clipboard holds the most recent copy for pasting. Once new material replaces it, retrieving an earlier excerpt, link, code snippet, or image can mean revisiting the original source.</p>
+    </td>
+    <td width="33%" valign="top" align="center">
+      <p><img src="assets/readme-icons/purpose.svg" width="20" height="20" alt="" /></p>
+      <p><strong>The Purpose</strong></p>
+      <p>Make repeatedly used clipboard material easy to find and reuse, without requiring an online account. Keep the workflow close to Windows, with practical search, organization, and direct control over saved history.</p>
+    </td>
+    <td width="33%" valign="top" align="center">
+      <p><img src="assets/readme-icons/solution.svg" width="20" height="20" alt="" /></p>
+      <p><strong>The Solution</strong></p>
+      <p>Capture supported clipboard changes, store entries with timestamps in a locally encrypted history file, and provide filtering, one-click re-copy, editing for text, multi-selection, and targeted deletion from the desktop interface.</p>
+    </td>
+  </tr>
+</table>
 
-- **ICO:** `src/ClipboardHistory/Resources/App.ico` — embedded into the Windows executable and used for the taskbar, title bar, system tray, shortcuts, and installer.
-- **PNG:** `assets/branding/Clipboard_History_Logo.png` — original 1024×1024 transparent PNG for README, documentation, large UI graphics, and promotional images.
+## <img src="assets/readme-icons/workflow.svg" width="24" height="24" alt="" /> How It Works
 
-The official PNG is now the user's original **1024 × 1024 transparent image**, retained at full resolution without resizing, recompression, or watermarking. The Windows ICO is the exact user-supplied **32 × 32** icon. Both depict the same artwork and serve different use cases.
+1. **Capture:** While tracking is enabled, the app listens for Windows clipboard change notifications and reads supported text or image content.
+2. **Classify:** Text is labeled as text, links, code, or hex colors based on content; image copies are saved as PNG data. Consecutive identical copies are skipped.
+3. **Persist:** Entries and timestamps are serialized to a local file protected by Windows Data Protection API (DPAPI), scoped to the current user.
+4. **Find and select:** Use the search field, type filter, checkbox multi-select, or Ctrl/Shift selection to work with saved entries.
+5. **Reuse or remove:** Click a row to copy its full text or image back to the clipboard; edit text entries, delete selections, or clear history by time range.
+6. **Keep running:** The notification-area icon toggles the window with a left click; its right-click menu offers exit. Optional Windows autostart is off by default.
 
-The app uses the supplied clipboard-list artwork, stored at `src/ClipboardHistory/Resources/App.ico`. This icon is embedded into the Windows executable and used by the main window, edit dialog, system tray, installer, and Start menu/desktop shortcuts. Reinstall `Clipboard_History_Setup.exe` to apply the update. If Windows continues displaying an older icon due to its icon cache, unpin and re-pin the shortcut or restart Windows Explorer.
+**Privacy boundaries:** There are no application network calls, accounts, or cloud sync in the inspected source. DPAPI protects the saved file at rest but cannot prevent other programs running as the same Windows user from accessing live clipboard data. Sensitive clipboard content is **not automatically filtered**. See [Security and privacy](SECURITY.md).
 
-## New v1.2.2 interface and tray interaction
+## <img src="assets/readme-icons/stack.svg" width="24" height="24" alt="" /> Tech Stack
 
-- **Updated custom icon:** the supplied watermark-free \`clipboard_transparent.ico\` is embedded as \`Resources/App.ico\` and replaces the previous icon in the main window, edit window, compiled executable, installer, shortcuts and system tray.
-- **System tray toggle:** one **left click** on the tray icon shows the window when hidden and hides it when visible. Right-click opens the Show / Hide and Exit menu. The icon stays present while the application runs; Windows may place it under the hidden-icons **^** overflow. Pin it from Windows **Settings > Personalization > Taskbar > Other system tray icons** to make it always visible.
-- **Polished dark mode:** glass-like rounded slate clip cards, softer steel-blue selection glow, more breathing room and text padding, search field and clip category filtering.
-- **Readable dark category dropdown:** both the closed filter and its expanded options use dark slate panels with high-contrast white text and blue hover/selected states.
-- **Visual multi-select:** every card has a checkbox; checked cards show a vivid steel-blue highlight and a checkmark, and the toolbar displays how many clips are selected. Checking a box adds or removes that card without losing other selections or copying the clip. Ctrl/Shift row selection, right-click selection actions, and Delete selected continue to work.
-- **Images supported:** stores actual clipboard images as PNG inside the encrypted local history, limited to 5 MB per image. Clicking an image history entry restores the image to Windows clipboard for pasting. Text, Links, Code, and hex Color clips are identified automatically.
-- **Search:** filter history by text or clip category (image-only clips can be filtered with the Images dropdown).
-- **Existing history preserved:** older encrypted text-only entries remain readable. Nothing is uploaded to the cloud.
+| Component | Technology | Role |
+| :--- | :--- | :--- |
+| Desktop application | <img src="https://skillicons.dev/icons?i=cs,dotnet" height="28" alt="C# and .NET" /> **C# / .NET 10** | Native Windows application logic and runtime |
+| User interface | **Windows Presentation Foundation (WPF)** | Desktop window, searchable history, selection and dark-theme layout |
+| Windows integration | **Win32 clipboard APIs + Windows Forms NotifyIcon** | Clipboard change notifications, tray icon and Windows integration |
+| Local storage | **JSON + Windows DPAPI** | Per-user encrypted persistence and legacy-history migration |
+| Windows packaging | **Inno Setup 6 + PowerShell** | Per-user installer, build automation and SHA-256 checksum |
+| Continuous integration | <img src="https://skillicons.dev/icons?i=githubactions" height="28" alt="GitHub Actions" /> **GitHub Actions** | Windows build and installer artifact workflow |
 
-## Using the app
+## <img src="assets/readme-icons/installation.svg" width="24" height="24" alt="" /> Installation & Usage
 
-- **Copy text anywhere in Windows:** the app automatically records it with a local timestamp.
-- **Left-click a row:** the exact full text is placed on the Windows clipboard for Ctrl+V.
-- **Right-click a row:** Copy, Edit, Select / Deselect, Select All, Deselect All, Delete.
-- **Ctrl-click / Shift-click:** select multiple rows. Delete selected removes all highlighted rows.
-- **Clear history ▾:** delete items from the last 15m, 30m, 1–6h, 12h, 24h, 48h, 72h, 1 week, 1 month, 1 year, or all time. A confirmation appears before clearing.
-- **Track clipboard:** pause/resume collection. The app ignores consecutive identical copies.
-- **Start with Windows:** optional per-user autostart, disabled by default.
-- **Minimize or close the window:** it keeps working in the notification tray; double-click the tray icon to reopen. Right-click the tray icon > **Exit Clipboard History** to stop it.
+### Windows requirements
 
-Plain text and images are captured (image PNG payload up to 5 MB); rich text formatting and file-list copies are not captured. To keep the app responsive it skips clipboard text longer than two million characters. Editing a saved entry does not modify the current system clipboard until you copy that entry again. UI uses a one-line preview; clicking copies the complete original text.
+- Windows **10 or 11, x64**, in a normal desktop user session.
+- Installation is **per-user** and does not require administrator elevation.
+- The packaged application is **self-contained**; installing the .NET SDK or Visual Studio is not necessary for ordinary use.
 
-## Security / data storage
+### Install the historical preview
 
-History is automatically persisted locally, encrypted using Windows DPAPI in the current user account. Data file: %LOCALAPPDATA%\OhanaTechSolutions\OTSClipboardHistory\history.dat. The app makes no network requests. See [SECURITY.md](SECURITY.md) for important privacy limitations: copied passwords and other secrets are still sensitive, and clearing app history does not erase Windows' or other apps' clipboard logs.
+1. Open [v1.2.2 legacy preview on GitHub Releases](https://github.com/ohanatechsolutions/Clipboard-History/releases/tag/v1.2.2-legacy-preview).
+2. Download `OTS_Clipboard_History_Setup.exe` and its matching `.exe.sha256` file from **Assets**.
+3. In PowerShell, verify the downloaded executable's checksum against the published checksum:
 
-Uninstall via Windows **Settings > Apps > Installed apps > Clipboard History**. Your encrypted history data is intentionally not deleted automatically on uninstall. To remove it as well, first exit the app and then delete the folder %LOCALAPPDATA%\OhanaTechSolutions\OTSClipboardHistory.
+   ```powershell
+   (Get-FileHash .\OTS_Clipboard_History_Setup.exe -Algorithm SHA256).Hash
+   ```
 
-## Build from source (step by step)
+4. After verifying the hash, run the installer and follow the Windows wizard.
 
-Requirements: Windows 10/11 x64, [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0) (free) and [Inno Setup 6](https://jrsoftware.org/isinfo.php) (free).
+> **Release caution:** This is an **unsigned historical pre-release**, not a production-certified build. A successful SHA-256 match checks file integrity against the published checksum, **not** publisher identity or malware safety. Clean-machine install, launch, tray, migration, and uninstall acceptance tests have not been signed off for this historical installer. See the [installer distribution audit](docs/INSTALLER_DISTRIBUTION_AUDIT.md).
 
-1. On GitHub, click **Code > Download ZIP**, then extract the project somewhere on Windows.
-2. Install the .NET 10 SDK, then install Inno Setup 6 using its normal installation wizard.
-3. Open the extracted repository folder in File Explorer.
-4. Click the folder address bar, type **powershell**, and press Enter.
-5. In the PowerShell window, run this command:
+### Everyday usage
 
-        powershell -ExecutionPolicy Bypass -File .\scripts\build-installer.ps1
+| Action | How |
+| :--- | :--- |
+| Save a copy | Copy supported text or images in Windows while **Track clipboard** is enabled |
+| Re-copy an entry | Left-click a history row, then paste with `Ctrl+V` |
+| Find an entry | Search text or filter by clip category |
+| Select multiple entries | Use checkboxes or `Ctrl`/`Shift` selection |
+| Manage saved entries | Right-click to copy, edit text, select, deselect, or delete |
+| Clear a time period | Use **Clear history ▾** and confirm the selected range |
+| Pause collection | Turn off **Track clipboard** |
+| Hide/show the window | Left-click the system tray icon |
+| Fully stop the app | Right-click its tray icon and choose **Exit Clipboard History** |
+| Start on sign-in | Enable the optional **Start with Windows** setting |
 
-6. The actual installer will appear at **dist\setup\Clipboard_History_Setup.exe**. Its SHA-256 checksum is in **dist\setup\Clipboard_History_Setup.exe.sha256**.
-7. Double-click the setup .exe to install and launch the program.
+Closing or minimizing the window hides it to the tray; the app keeps monitoring until exited. Windows may put the icon in its hidden-icons area.
 
-To run from source without an installer, in the project folder run:
+### Build from source
 
-    dotnet run --project src/ClipboardHistory/ClipboardHistory.csproj
+On Windows, install the [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0) and [Inno Setup 6](https://jrsoftware.org/isinfo.php), then clone or download this repository. From its root directory, run:
 
-## Automated GitHub build
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\build-installer.ps1
+```
 
-The workflow at **.github/workflows/windows-installer.yml** runs on every push to main (and via **Actions > Build Windows installer > Run workflow**). A Windows runner:
-1. Restores/builds the C# WPF project.
-2. Publishes a self-contained single-file win-x64 app.
-3. Compiles an Inno Setup installer executable.
-4. Generates the matching SHA-256 checksum.
-5. Publishes a downloadable GitHub Actions artifact.
-6. Keeps generated binaries out of source control; reviewed, approved versions should be distributed through GitHub Releases.
+The script restores and publishes the application, builds `dist/setup/Clipboard_History_Setup.exe`, and writes `dist/setup/Clipboard_History_Setup.exe.sha256`.
 
-GitHub Actions availability and minutes depend on your GitHub plan, especially for private repositories. This CI is the Windows build and packaging check; GUI interaction and tray behavior should also be smoke-tested on an actual Windows desktop.
+To start the application directly from source without installing it:
 
-## Source layout
+```powershell
+dotnet run --project src/ClipboardHistory/ClipboardHistory.csproj
+```
 
-- **src/ClipboardHistory/** — WPF desktop app and encrypted history persistence.
-- **packaging/Clipboard_History.iss** — Inno Setup installer definition.
-- **scripts/build-installer.ps1** — one-command Windows build.
-- **GitHub Releases** — versioned installer downloads; generated artifacts are not committed to the source tree.
-- **.github/workflows/** — automated Windows installer build.
-- **SECURITY.md** — private data and threat-model notes.
+The [Windows installer workflow](.github/workflows/windows-installer.yml) also builds on eligible pushes to `main` and supports manual runs under **Actions → Build Windows installer → Run workflow**. Generated installers are workflow artifacts rather than files checked into the source tree. Workflow success does not replace hands-on Windows GUI testing.
 
-## Requirements, known limits, and troubleshooting
+### Storage, migration and limitations
 
-- Windows 10/11 x64 only, normal desktop user session. No administrator privileges required.
-- Supports Unicode text clipboard formats. Apps that block clipboard reads or Windows secure desktops cannot be monitored.
-- No global hotkey; left-click the system tray icon to show or hide the app.
-- Multiple instances are prevented; if the app says it is already running, find the Clipboard History tray icon.
-- If new entries do not appear, verify **Track clipboard** is checked and the app is running in the tray.
-- If you can't find the app after closing it, open the system tray / hidden icons area. You may need to enable the Clipboard History icon in Windows Taskbar settings; apps cannot force Windows to pin tray icons.
-- If encrypted history can't be decrypted after Windows user-profile migration, it won't be silently overwritten. Keep the file safe and use the original Windows account/DPAPI keys to recover access.
-- If a Windows build fails, inspect **GitHub > Actions > Build Windows installer > the failed run** and review its logs.
-- Installer uses **per-user installation** and **does not require elevation**.
-- Application and installer are not Authenticode code-signed.
+- **History file:** `%LOCALAPPDATA%\OhanaTechSolutions\OTSClipboardHistory\history.dat`. Data is DPAPI-encrypted for the current Windows user.
+- **Older installations:** The app can read the previous `%LOCALAPPDATA%\OhanaTechSolutions\OTSClipboard\history.dat` file and preserve the original while migrating data. Exit the older app before upgrading; verify migrated entries before deleting legacy data.
+- **Capture limits:** Text longer than **2,000,000 characters** and PNG-encoded clipboard images larger than **5 MB** are skipped. Rich-text formatting and file-list copies are not captured.
+- **Clipboard access:** Windows secure desktops and other applications that prevent clipboard reads cannot be monitored. There is no global hotkey.
+- **Uninstall:** Use **Settings → Apps → Installed apps → Clipboard History**. Uninstalling does **not** delete the saved history file automatically.
+- **Privacy:** This app does not clear Windows clipboard history, other apps' records, filesystem backups, or previously allocated storage. Pause tracking before copying secrets when appropriate.
+- **Troubleshooting:** If new entries stop appearing, check **Track clipboard**, that the app is running in the tray, and the [security guidance](SECURITY.md). If an installer build fails, inspect its GitHub Actions job logs.
 
-## Version and licensing
+## <img src="assets/readme-icons/visuals.svg" width="24" height="24" alt="" /> Branding
 
-Version **1.2.2**, 2026. Developed by **Ohana Tech Solutions**. This publicly visible repository has no open-source license grant; ask the owner before redistributing source code or compiled binaries.
+<p align="center">
+  <img src="assets/branding/Clipboard_History_Logo.png" width="160" alt="Official Clipboard History application logo" />
+</p>
+
+The existing light/dark hero assets are in `art/`. The full-resolution transparent PNG above is the documentation and in-app branding asset; `src/ClipboardHistory/Resources/App.ico` is the Windows executable, window, installer and tray icon. Both are preserved unchanged.
+
+*Actual application screenshots have not been added to this repository; no interface mockups are presented as verified screenshots.*
+
+## <img src="assets/readme-icons/roadmap.svg" width="24" height="24" alt="" /> Roadmap & Verification
+
+- [x] **Clipboard tracking:** Windows change notifications with text and image capture.
+- [x] **History management:** Search, category filtering, re-copy, text editing, checkbox multi-select and deletion.
+- [x] **Local persistence:** DPAPI-encrypted per-user history with backward-compatible migration logic.
+- [x] **Tray integration:** Click-to-toggle window visibility and an explicit exit action.
+- [x] **Installer pipeline:** PowerShell/Inno Setup recipe and a GitHub Actions Windows build workflow.
+- [x] **Historical release:** v1.2.2 legacy preview published with a checksum; see [distribution evidence](docs/INSTALLER_DISTRIBUTION_AUDIT.md).
+- [ ] **Release acceptance:** Complete and record clean-Windows installation, launch, tray, migration and uninstall tests for the historical installer.
+- [ ] **Production signoff:** Obtain appropriate signing and independent release-security review before describing a build as production certified.
+
+Checkboxes reflect inspected implementation and documented release-audit evidence—not a claim that all runtime behavior has been manually tested.
+
+## <img src="assets/readme-icons/acknowledgements.svg" width="24" height="24" alt="" /> Acknowledgements
+
+Built using Microsoft's **.NET / WPF** desktop platform and Windows APIs, with **Inno Setup** for packaging and **GitHub Actions** for automation. Visual layout inspiration: [REACH by dmunish](https://github.com/dmunish/reach); no REACH application code or artwork is incorporated.
+
+The project source is distributed under the [MIT License](LICENSE), © 2026 Ohana Tech Solutions.
+
+---
+
+<p align="center">
+  <sub>Developed by <b>Ohana Tech Solutions</b>.</sub>
+</p>
