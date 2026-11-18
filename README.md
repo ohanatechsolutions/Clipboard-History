@@ -160,7 +160,7 @@ Checkboxes reflect inspected implementation and documented release-audit evidenc
 
 ## <img src="assets/readme-icons/acknowledgements.svg" width="24" height="24" alt="" /> Acknowledgements
 
-Built using Microsoft's **.NET / WPF** desktop platform and Windows APIs, with **Inno Setup** for packaging and **GitHub Actions** for automation. Visual layout inspiration: [REACH by dmunish](https://github.com/dmunish/reach); no REACH application code or artwork is incorporated.
+Built using Microsoft's **.NET / WPF** desktop platform and Windows APIs, with **Inno Setup** for packaging and **GitHub Actions** for automation. 
 
 The project source is distributed under the [MIT License](LICENSE), © 2026 Ohana Tech Solutions.
 
