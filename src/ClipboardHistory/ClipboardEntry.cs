@@ -8,7 +8,7 @@ using Color = System.Windows.Media.Color;
 using ColorConverter = System.Windows.Media.ColorConverter;
 using System.Text.RegularExpressions;
 
-namespace OTS.Clipboard.History;
+namespace ClipboardHistory;
 
 public sealed class ClipboardEntry
 {

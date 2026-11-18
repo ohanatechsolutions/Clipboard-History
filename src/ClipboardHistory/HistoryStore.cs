@@ -3,7 +3,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 
-namespace OTS.Clipboard.History;
+namespace ClipboardHistory;
 
 /// <summary>Only local, per-Windows-user DPAPI encrypted history. No network calls.</summary>
 public sealed class HistoryStore

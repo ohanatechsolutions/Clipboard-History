@@ -17,7 +17,7 @@ using CheckBox = System.Windows.Controls.CheckBox;
 using DataGridRow = System.Windows.Controls.DataGridRow;
 using Color = System.Windows.Media.Color;
 
-namespace OTS.Clipboard.History;
+namespace ClipboardHistory;
 
 public partial class MainWindow : Window
 {
@@ -25,7 +25,8 @@ public partial class MainWindow : Window
     private const int MaxCopiedTextLength = 2_000_000;
     private const int MaxImageBytes = 5 * 1024 * 1024;
     private const string RunKeyPath = @"Software\Microsoft\Windows\CurrentVersion\Run";
-    private const string RunValueName = "OTSClipboardHistory";
+    private const string RunValueName = "ClipboardHistory";
+    private const string PreviousRunValueName = "OTSClipboardHistory";
     // Preserve previous users' optional startup preference during the rename.
     private const string LegacyRunValueName = "OTSClipboard";
 
@@ -70,7 +71,7 @@ public partial class MainWindow : Window
             MessageBox.Show(this,
                 "Saved history could not be decrypted or read. Existing history will NOT be overwritten.\n\n" +
                 ex.Message + "\n\nCheck the local history file or Windows account before restarting.",
-                "OTS Clipboard History · History warning",
+                "Clipboard History · History warning",
                 MessageBoxButton.OK, MessageBoxImage.Warning);
         }
 
@@ -87,13 +88,13 @@ public partial class MainWindow : Window
         }
 
         var menu = new System.Windows.Forms.ContextMenuStrip();
-        menu.Items.Add("Show / Hide OTS Clipboard History", null, (_, _) => Dispatcher.BeginInvoke(new Action(ToggleWindowVisibility)));
-        menu.Items.Add("Exit OTS Clipboard History", null, (_, _) => ExitApplication());
+        menu.Items.Add("Show / Hide Clipboard History", null, (_, _) => Dispatcher.BeginInvoke(new Action(ToggleWindowVisibility)));
+        menu.Items.Add("Exit Clipboard History", null, (_, _) => ExitApplication());
         _trayIconImage = LoadTrayIcon();
         _trayIcon = new System.Windows.Forms.NotifyIcon
         {
             Icon = _trayIconImage,
-            Text = "OTS Clipboard History - click to show/hide",
+            Text = "Clipboard History - click to show/hide",
             Visible = true,
             ContextMenuStrip = menu
         };
@@ -117,7 +118,7 @@ public partial class MainWindow : Window
         // Clone the native icon so the WPF resource stream can be safely disposed.
         var resource = System.Windows.Application.GetResourceStream(
             new Uri("pack://application:,,,/Resources/App.ico", UriKind.Absolute))
-            ?? throw new InvalidOperationException("The embedded OTS Clipboard History icon was not found.");
+            ?? throw new InvalidOperationException("The embedded Clipboard History icon was not found.");
 
         using var stream = resource.Stream;
         using var icon = new System.Drawing.Icon(stream);
@@ -461,7 +462,7 @@ public partial class MainWindow : Window
                            ?? throw new InvalidOperationException("Application executable path not found.");
                 key.SetValue(RunValueName, "\"" + path + "\"");
                 key.DeleteValue(LegacyRunValueName, throwOnMissingValue: false);
-                StatusText.Text = "OTS Clipboard History will start when you sign in to Windows";
+                StatusText.Text = "Clipboard History will start when you sign in to Windows";
             }
             else
             {
@@ -474,7 +475,7 @@ public partial class MainWindow : Window
         {
             AutoStartCheckBox.IsChecked = ReadAutoStart();
             MessageBox.Show(this, "Could not change startup setting:\n" + ex.Message,
-                "OTS Clipboard History", MessageBoxButton.OK, MessageBoxImage.Warning);
+                "Clipboard History", MessageBoxButton.OK, MessageBoxImage.Warning);
         }
     }
 
@@ -521,7 +522,7 @@ public partial class MainWindow : Window
             UpdateTrackingLabel();
             StatusText.Text = "Storage failed; tracking paused to prevent losing data";
             MessageBox.Show(this, "Could not safely save encrypted history.\n\n" + ex.Message,
-                "OTS Clipboard History", MessageBoxButton.OK, MessageBoxImage.Error);
+                "Clipboard History", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 

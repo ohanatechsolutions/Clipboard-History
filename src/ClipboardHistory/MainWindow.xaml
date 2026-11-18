@@ -1,7 +1,7 @@
-<Window x:Class="OTS.Clipboard.History.MainWindow"
+<Window x:Class="ClipboardHistory.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="OTS Clipboard History" Icon="pack://application:,,,/Resources/App.ico"
+        Title="Clipboard History" Icon="pack://application:,,,/Resources/App.ico"
         Width="1080" Height="760" MinWidth="790" MinHeight="540"
         WindowStartupLocation="CenterScreen" Background="#0F172A" Foreground="#FFFFFF"
         FontFamily="Segoe UI" FontSize="13">
@@ -234,7 +234,7 @@
                     <Image Source="pack://application:,,,/Resources/BrandLogo.png" Width="33" Height="33" Stretch="Uniform"/>
                 </Border>
                 <StackPanel VerticalAlignment="Center">
-                    <TextBlock Text="OTS Clipboard History" Foreground="#FFFFFF"
+                    <TextBlock Text="Clipboard History" Foreground="#FFFFFF"
                                FontSize="25" FontWeight="SemiBold"/>
                     <TextBlock Text="Your workspace for everything you've copied"
                                Foreground="#8BA8CD" FontSize="12" Margin="0,4,0,0"/>
