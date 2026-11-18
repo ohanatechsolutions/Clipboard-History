@@ -1,9 +1,9 @@
-# OTS Clipboard History branding
+# Clipboard History branding
 
-This folder contains reusable raster logo artwork for Ohana Tech Solutions' OTS Clipboard History application.
+This folder contains reusable raster logo artwork for Ohana Tech Solutions' Clipboard History application.
 
-- `OTS_Clipboard_History_Logo.png`: original, 1024×1024 transparent PNG supplied by the user, with no resizing or palette conversion.
-- `../../src/OTS.Clipboard.History/Resources/App.ico`: original Windows icon embedded in the executable and installer.
+- `Clipboard_History_Logo.png`: original, 1024×1024 transparent PNG supplied by the user, with no resizing or palette conversion.
+- `../../src/ClipboardHistory/Resources/App.ico`: original Windows icon embedded in the executable and installer.
 
 **Use:** ICO for Windows app identity (installer, executable, tray, shortcuts). PNG for documentation, preview images, and the application header (embedded with MSBuild as `Resources/BrandLogo.png`).
 

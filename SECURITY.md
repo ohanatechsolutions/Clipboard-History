@@ -1,6 +1,6 @@
 # Security and privacy
 
-OTS Clipboard History is a local-only tool. No accounts, analytics, cloud services, or networking are used.
+Clipboard History is a local-only tool. No accounts, analytics, cloud services, or networking are used.
 
 - New plain-text clipboard copies are saved for the active Windows user in DPAPI-encrypted form at:
   %LOCALAPPDATA%\OhanaTechSolutions\OTSClipboardHistory\history.dat

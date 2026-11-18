@@ -6,8 +6,8 @@ on:
     paths-ignore:
       - '**/*.md'
       - 'docs/**'
-      - 'installer/OTS_Clipboard_History_Setup.exe'
-      - 'installer/OTS_Clipboard_History_Setup.exe.sha256'
+      - 'installer/Clipboard_History_Setup.exe'
+      - 'installer/Clipboard_History_Setup.exe.sha256'
       - 'assets/branding/**'
   workflow_dispatch:
 
@@ -34,17 +34,17 @@ jobs:
       - name: Restore and compile WPF application
         shell: pwsh
         run: |
-          dotnet restore src/OTS.Clipboard.History/OTS.Clipboard.History.csproj
+          dotnet restore src/ClipboardHistory/ClipboardHistory.csproj
           if ($LASTEXITCODE -ne 0) { throw 'Restore failed' }
-          dotnet build src/OTS.Clipboard.History/OTS.Clipboard.History.csproj --no-restore --configuration Release
+          dotnet build src/ClipboardHistory/ClipboardHistory.csproj --no-restore --configuration Release
           if ($LASTEXITCODE -ne 0) { throw 'Build failed' }
 
       - name: Publish self-contained Windows application
         shell: pwsh
         run: |
-          dotnet publish src/OTS.Clipboard.History/OTS.Clipboard.History.csproj --configuration Release --runtime win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:DebugType=None --output dist/publish
+          dotnet publish src/ClipboardHistory/ClipboardHistory.csproj --configuration Release --runtime win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:DebugType=None --output dist/publish
           if ($LASTEXITCODE -ne 0) { throw 'Publish failed' }
-          if (-not (Test-Path 'dist/publish/OTS.Clipboard.History.exe')) { throw 'Application executable missing' }
+          if (-not (Test-Path 'dist/publish/ClipboardHistory.exe')) { throw 'Application executable missing' }
 
       - name: Install Inno Setup when necessary
         shell: pwsh
@@ -59,26 +59,26 @@ jobs:
       - name: Compile actual .exe installer
         shell: pwsh
         run: |
-          & 'C:\Program Files (x86)\Inno Setup 6\ISCC.exe' 'packaging/OTS_Clipboard_History.iss'
+          & 'C:\Program Files (x86)\Inno Setup 6\ISCC.exe' 'packaging/Clipboard_History.iss'
           if ($LASTEXITCODE -ne 0) { throw 'Installer compilation failed' }
-          if (-not (Test-Path 'dist/setup/OTS_Clipboard_History_Setup.exe')) { throw 'Installer executable missing' }
+          if (-not (Test-Path 'dist/setup/Clipboard_History_Setup.exe')) { throw 'Installer executable missing' }
 
       - name: Generate SHA-256 checksum
         shell: pwsh
         run: |
-          $file = 'dist/setup/OTS_Clipboard_History_Setup.exe'
+          $file = 'dist/setup/Clipboard_History_Setup.exe'
           $hash = (Get-FileHash -Algorithm SHA256 $file).Hash.ToLowerInvariant()
-          Set-Content -Path 'dist/setup/OTS_Clipboard_History_Setup.exe.sha256' -Value "$hash  OTS_Clipboard_History_Setup.exe" -Encoding ascii
+          Set-Content -Path 'dist/setup/Clipboard_History_Setup.exe.sha256' -Value "$hash  Clipboard_History_Setup.exe" -Encoding ascii
           Get-Item $file | Select-Object FullName,Length
           Write-Host "SHA-256: $hash"
 
       - name: Upload downloadable installer artifact
         uses: actions/upload-artifact@v4
         with:
-          name: OTS_Clipboard_History_Windows_Installer
+          name: Clipboard_History_Windows_Installer
           path: |
-            dist/setup/OTS_Clipboard_History_Setup.exe
-            dist/setup/OTS_Clipboard_History_Setup.exe.sha256
+            dist/setup/Clipboard_History_Setup.exe
+            dist/setup/Clipboard_History_Setup.exe.sha256
           if-no-files-found: error
           retention-days: 1
 

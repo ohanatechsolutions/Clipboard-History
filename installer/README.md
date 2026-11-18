@@ -1,15 +1,9 @@
-# Installable Windows application
+# Clipboard History Windows installer
 
-The **real** Windows installation file is named **OTS_Clipboard_History_Setup.exe** (not an .iss script).
+The Windows installer is named **Clipboard_History_Setup.exe**. Build it using GitHub Actions or scripts/build-installer.ps1. The executable and its .sha256 checksum are distributed as Actions artifacts; they are not checked into the source tree.
 
-After the Windows GitHub Actions workflow succeeds, it commits the real installer and its matching SHA-256 file to this folder, provided the installer is below GitHub's per-file size limit.
+Go to Actions > Build Windows installer > latest successful run > Artifacts > Clipboard_History_Windows_Installer. Download and extract the artifact, then verify the SHA-256 checksum using PowerShell:
 
-If the file is not present, go to **Actions > Build Windows installer > latest successful run > Artifacts > OTS_Clipboard_History_Windows_Installer**, download the ZIP, extract it, and double-click **OTS_Clipboard_History_Setup.exe**.
+    Get-FileHash .\Clipboard_History_Setup.exe -Algorithm SHA256
 
-To verify integrity in Windows PowerShell:
-
-    Get-FileHash .\OTS_Clipboard_History_Setup.exe -Algorithm SHA256
-
-Compare the output to the hex string in **OTS_Clipboard_History_Setup.exe.sha256**. Windows SmartScreen can warn about unsigned, newly created installers; the app is not code-signed.
-
-The .iss file in the packaging directory is the *installer source code*, not an installer.
+Compare the result with Clipboard_History_Setup.exe.sha256. The installer is unsigned and Windows SmartScreen may warn. Historical pre-release assets retain their original filenames and checksums.

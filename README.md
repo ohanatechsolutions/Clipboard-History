@@ -1,31 +1,31 @@
-# OTS Clipboard History
+# Clipboard History
 
-**OTS Clipboard History** is a lightweight, native Windows text clipboard-history app, developed by **Ohana Tech Solutions**. It silently monitors Windows clipboard changes while running, shows each copied text with a local timestamp, and lets you click any entry to copy it again.
+**Clipboard History** is a lightweight, native Windows text clipboard-history app, developed by **Ohana Tech Solutions**. It silently monitors Windows clipboard changes while running, shows each copied text with a local timestamp, and lets you click any entry to copy it again.
 
 ## Install (Windows 10 or 11, x64)
 
-1. Open [GitHub Releases — v1.2.2 legacy preview](https://github.com/ohanatechsolutions/OTS_Clipboard_History/releases/tag/v1.2.2-legacy-preview).
-2. Under **Assets**, download `OTS_Clipboard_History_Setup.exe` and its matching `.exe.sha256` checksum.
-3. Compare the published SHA-256 to the downloaded EXE using `(Get-FileHash .\OTS_Clipboard_History_Setup.exe -Algorithm SHA256).Hash`.
+1. Open [GitHub Releases — v1.2.2 legacy preview](https://github.com/ohanatechsolutions/Clipboard-History/releases/tag/v1.2.2-legacy-preview).
+2. Under **Assets**, download the original legacy installer and its matching `.exe.sha256` checksum.
+3. Compare the published SHA-256 to the downloaded EXE using `(Get-FileHash .\<downloaded-installer>.exe -Algorithm SHA256).Hash`.
 4. This is an **unsigned historical pre-release**, not a certified production build. A clean Windows install and GUI acceptance test must still be performed before a final release.
 5. After verification, follow the Windows setup wizard. If upgrading from the earlier **OTS Clipboard** application, exit it via its tray icon first. The same Inno Setup AppId is used, and the application is designed to preserve and migrate older DPAPI-encrypted history. Verify migration before deleting any legacy data.
 
-Current builds remain downloadable as temporary artifacts under **Actions → Build Windows installer**. The `packaging/OTS_Clipboard_History.iss` file is the installer recipe, not a runnable installer. Builds no longer commit generated EXE or checksum files into the source tree.
+Current builds remain downloadable as temporary artifacts under **Actions → Build Windows installer**. The `packaging/Clipboard_History.iss` file is the installer recipe, not a runnable installer. Builds no longer commit generated EXE or checksum files into the source tree.
 
 **The installer bundles the .NET Desktop runtime** (self-contained). Users don't need Python, Visual Studio, or the .NET SDK.
 
 ## Application logo assets
 
-![OTS Clipboard History logo](assets/branding/OTS_Clipboard_History_Logo.png)
+![Clipboard History logo](assets/branding/Clipboard_History_Logo.png)
 
 Both formats of the same watermark-free artwork are available in this repository. The original 1024px PNG is embedded as the branding image in the app header, while the ICO continues to identify the Windows executable, installer, taskbar, system tray, and shortcuts:
 
-- **ICO:** `src/OTS.Clipboard.History/Resources/App.ico` — embedded into the Windows executable and used for the taskbar, title bar, system tray, shortcuts, and installer.
-- **PNG:** `assets/branding/OTS_Clipboard_History_Logo.png` — original 1024×1024 transparent PNG for README, documentation, large UI graphics, and promotional images.
+- **ICO:** `src/ClipboardHistory/Resources/App.ico` — embedded into the Windows executable and used for the taskbar, title bar, system tray, shortcuts, and installer.
+- **PNG:** `assets/branding/Clipboard_History_Logo.png` — original 1024×1024 transparent PNG for README, documentation, large UI graphics, and promotional images.
 
 The official PNG is now the user's original **1024 × 1024 transparent image**, retained at full resolution without resizing, recompression, or watermarking. The Windows ICO is the exact user-supplied **32 × 32** icon. Both depict the same artwork and serve different use cases.
 
-The app uses the supplied clipboard-list artwork, stored at `src/OTS.Clipboard.History/Resources/App.ico`. This icon is embedded into the Windows executable and used by the main window, edit dialog, system tray, installer, and Start menu/desktop shortcuts. Reinstall `OTS_Clipboard_History_Setup.exe` to apply the update. If Windows continues displaying an older icon due to its icon cache, unpin and re-pin the shortcut or restart Windows Explorer.
+The app uses the supplied clipboard-list artwork, stored at `src/ClipboardHistory/Resources/App.ico`. This icon is embedded into the Windows executable and used by the main window, edit dialog, system tray, installer, and Start menu/desktop shortcuts. Reinstall `Clipboard_History_Setup.exe` to apply the update. If Windows continues displaying an older icon due to its icon cache, unpin and re-pin the shortcut or restart Windows Explorer.
 
 ## New v1.2.2 interface and tray interaction
 
@@ -47,7 +47,7 @@ The app uses the supplied clipboard-list artwork, stored at `src/OTS.Clipboard.H
 - **Clear history ▾:** delete items from the last 15m, 30m, 1–6h, 12h, 24h, 48h, 72h, 1 week, 1 month, 1 year, or all time. A confirmation appears before clearing.
 - **Track clipboard:** pause/resume collection. The app ignores consecutive identical copies.
 - **Start with Windows:** optional per-user autostart, disabled by default.
-- **Minimize or close the window:** it keeps working in the notification tray; double-click the tray icon to reopen. Right-click the tray icon > **Exit OTS Clipboard History** to stop it.
+- **Minimize or close the window:** it keeps working in the notification tray; double-click the tray icon to reopen. Right-click the tray icon > **Exit Clipboard History** to stop it.
 
 Plain text and images are captured (image PNG payload up to 5 MB); rich text formatting and file-list copies are not captured. To keep the app responsive it skips clipboard text longer than two million characters. Editing a saved entry does not modify the current system clipboard until you copy that entry again. UI uses a one-line preview; clicking copies the complete original text.
 
@@ -55,7 +55,7 @@ Plain text and images are captured (image PNG payload up to 5 MB); rich text for
 
 History is automatically persisted locally, encrypted using Windows DPAPI in the current user account. Data file: %LOCALAPPDATA%\OhanaTechSolutions\OTSClipboardHistory\history.dat. The app makes no network requests. See [SECURITY.md](SECURITY.md) for important privacy limitations: copied passwords and other secrets are still sensitive, and clearing app history does not erase Windows' or other apps' clipboard logs.
 
-Uninstall via Windows **Settings > Apps > Installed apps > OTS Clipboard History**. Your encrypted history data is intentionally not deleted automatically on uninstall. To remove it as well, first exit the app and then delete the folder %LOCALAPPDATA%\OhanaTechSolutions\OTSClipboardHistory.
+Uninstall via Windows **Settings > Apps > Installed apps > Clipboard History**. Your encrypted history data is intentionally not deleted automatically on uninstall. To remove it as well, first exit the app and then delete the folder %LOCALAPPDATA%\OhanaTechSolutions\OTSClipboardHistory.
 
 ## Build from source (step by step)
 
@@ -69,12 +69,12 @@ Requirements: Windows 10/11 x64, [.NET 10 SDK](https://dotnet.microsoft.com/down
 
         powershell -ExecutionPolicy Bypass -File .\scripts\build-installer.ps1
 
-6. The actual installer will appear at **dist\setup\OTS_Clipboard_History_Setup.exe**. Its SHA-256 checksum is in **dist\setup\OTS_Clipboard_History_Setup.exe.sha256**.
+6. The actual installer will appear at **dist\setup\Clipboard_History_Setup.exe**. Its SHA-256 checksum is in **dist\setup\Clipboard_History_Setup.exe.sha256**.
 7. Double-click the setup .exe to install and launch the program.
 
 To run from source without an installer, in the project folder run:
 
-    dotnet run --project src/OTS.Clipboard.History/OTS.Clipboard.History.csproj
+    dotnet run --project src/ClipboardHistory/ClipboardHistory.csproj
 
 ## Automated GitHub build
 
@@ -90,8 +90,8 @@ GitHub Actions availability and minutes depend on your GitHub plan, especially f
 
 ## Source layout
 
-- **src/OTS.Clipboard.History/** — WPF desktop app and encrypted history persistence.
-- **packaging/OTS_Clipboard_History.iss** — Inno Setup installer definition.
+- **src/ClipboardHistory/** — WPF desktop app and encrypted history persistence.
+- **packaging/Clipboard_History.iss** — Inno Setup installer definition.
 - **scripts/build-installer.ps1** — one-command Windows build.
 - **GitHub Releases** — versioned installer downloads; generated artifacts are not committed to the source tree.
 - **.github/workflows/** — automated Windows installer build.
@@ -102,9 +102,9 @@ GitHub Actions availability and minutes depend on your GitHub plan, especially f
 - Windows 10/11 x64 only, normal desktop user session. No administrator privileges required.
 - Supports Unicode text clipboard formats. Apps that block clipboard reads or Windows secure desktops cannot be monitored.
 - No global hotkey; left-click the system tray icon to show or hide the app.
-- Multiple instances are prevented; if the app says it is already running, find the OTS Clipboard History tray icon.
+- Multiple instances are prevented; if the app says it is already running, find the Clipboard History tray icon.
 - If new entries do not appear, verify **Track clipboard** is checked and the app is running in the tray.
-- If you can't find the app after closing it, open the system tray / hidden icons area. You may need to enable the OTS Clipboard History icon in Windows Taskbar settings; apps cannot force Windows to pin tray icons.
+- If you can't find the app after closing it, open the system tray / hidden icons area. You may need to enable the Clipboard History icon in Windows Taskbar settings; apps cannot force Windows to pin tray icons.
 - If encrypted history can't be decrypted after Windows user-profile migration, it won't be silently overwritten. Keep the file safe and use the original Windows account/DPAPI keys to recover access.
 - If a Windows build fails, inspect **GitHub > Actions > Build Windows installer > the failed run** and review its logs.
 - Installer uses **per-user installation** and **does not require elevation**.
