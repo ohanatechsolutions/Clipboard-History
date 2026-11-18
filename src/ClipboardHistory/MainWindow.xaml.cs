@@ -462,6 +462,7 @@ public partial class MainWindow : Window
                            ?? throw new InvalidOperationException("Application executable path not found.");
                 key.SetValue(RunValueName, "\"" + path + "\"");
                 key.DeleteValue(LegacyRunValueName, throwOnMissingValue: false);
+                key.DeleteValue(PreviousRunValueName, throwOnMissingValue: false);
                 StatusText.Text = "Clipboard History will start when you sign in to Windows";
             }
             else
@@ -487,7 +488,8 @@ public partial class MainWindow : Window
             if (key.GetValue(RunValueName) is string existing && !string.IsNullOrWhiteSpace(existing))
                 return true;
 
-            if (key.GetValue(LegacyRunValueName) is string old && !string.IsNullOrWhiteSpace(old))
+            if ((key.GetValue(PreviousRunValueName) is string prior && !string.IsNullOrWhiteSpace(prior)) ||
+                (key.GetValue(LegacyRunValueName) is string old && !string.IsNullOrWhiteSpace(old)))
             {
                 // Replace the old startup path with the renamed executable (no duplicate launches).
                 var path = Environment.ProcessPath;
