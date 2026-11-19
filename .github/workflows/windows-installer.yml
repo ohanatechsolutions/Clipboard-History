@@ -81,19 +81,9 @@ jobs:
           $checksumFile = 'dist/setup/Clipboard_History_Setup.exe.sha256'
           if (-not (Test-Path $file) -or -not (Test-Path $checksumFile)) { throw 'Installer or checksum file is missing' }
           $expectedLine = (Get-Content -LiteralPath $checksumFile -Raw).Trim()
-          if ($expectedLine -notmatch '^([a-fA-F0-9]{64})\s+Clipboard_History_Setup\.exe
-        uses: actions/upload-artifact@v4
-        with:
-          name: Clipboard_History_Windows_Installer
-          path: |
-            dist/setup/Clipboard_History_Setup.exe
-            dist/setup/Clipboard_History_Setup.exe.sha256
-          if-no-files-found: error
-          retention-days: 1
-
-) { throw 'Malformed installer checksum' }
+          if ($expectedLine -notmatch '^([a-fA-F0-9]{64})\s+Clipboard_History_Setup\.exe$') { throw 'Malformed installer checksum' }
           $actual = (Get-FileHash -LiteralPath $file -Algorithm SHA256).Hash
-          if ($actual -ne $expectedLine.Substring(0, 64)) { throw 'Installer SHA-256 mismatch' }
+          if ($actual -ne $Matches[1]) { throw 'Installer SHA-256 mismatch' }
           if ((Get-Item $file).Length -lt 100000) { throw 'Installer is suspiciously small' }
           Write-Host 'Installer file size and checksum verified'
       - name: Sign build provenance attestation
