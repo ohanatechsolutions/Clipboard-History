@@ -91,7 +91,7 @@ jobs:
 
 ) { throw 'Malformed installer checksum' }
           $actual = (Get-FileHash -LiteralPath $file -Algorithm SHA256).Hash
-          if ($actual -ne $Matches[1]) { throw 'Installer SHA-256 mismatch' }
+          if ($actual -ne $expectedLine.Substring(0, 64)) { throw 'Installer SHA-256 mismatch' }
           if ((Get-Item $file).Length -lt 100000) { throw 'Installer is suspiciously small' }
           Write-Host 'Installer file size and checksum verified'
       - name: Upload downloadable installer artifact
